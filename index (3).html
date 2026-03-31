@@ -128,9 +128,153 @@
         </div>
 
         <div class="card">
+           <html lang="th"><head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/4x87hm6s/pxfuel.jpg">
+    <meta name="apple-mobile-web-app-title" content="PXZ.CN PANEL">
+    
+    <style>
+        :root { --main: #61b3da; --bg: #7aa7e9; --card: #88d2f0; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: -apple-system, sans-serif;
+            background-color: #2a4ada !important;
+            color: #5ba5e2 !important;
+            margin: 0; padding: 0;
+            overflow-x: hidden; -webkit-user-select: none;
+        }
+
+        #bg-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.5; pointer-events: none; }
+
+        /* --- LOADER --- */
+        #loader {
+            position: fixed; inset: 0; background: #0b07fd;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000;
+        }
+        
+        .vx-logo-frame {
+            width: 100px; height: 100px; border: 4px solid var(--main);
+            border-radius: 25px; overflow: hidden; display: flex;
+            justify-content: center; align-items: center;
+            box-shadow: 0 0 40px var(--main), 0 0 80px rgba(97, 179, 218, 0.5);
+            animation: pulse 1.5s infinite; margin-bottom: 25px;
+        }
+        
+        .vx-logo-frame img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .progress-box { 
+            width: 70%; height: 8px; background: rgba(97, 179, 218, 0.2); 
+            border-radius: 10px; overflow: hidden; border: 1px solid var(--main);
+            box-shadow: 0 0 20px rgba(97, 179, 218, 0.3);
+        }
+        
+        .progress-bar { 
+            width: 0%; height: 100%; background: linear-gradient(90deg, #ff0000, #ff6b6b, #ff0000);
+            box-shadow: 0 0 20px #ff0000, 0 0 40px rgba(255, 0, 0, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3);
+            transition: width 0.08s linear;
+            border-radius: 10px;
+            animation: glow 1.5s infinite;
+        }
+
+        /* --- MAIN UI --- */
+        #main-ui { display: none; padding: 20px; animation: slideIn 0.5s ease; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .ver-tag { background: var(--main); color: #5decc8; padding: 4px 12px; border-radius: 8px; font-weight: 900; font-size: 11px; box-shadow: 0 0 15px var(--main); }
+
+        .card {
+            background: #0f0f0f !important; border-radius: 20px; padding: 18px;
+            margin-bottom: 15px; border: 1px solid #1a1a1a;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .section-title { font-size: 12px; color: var(--main); font-weight: 900; margin-bottom: 15px; display: flex; align-items: center; letter-spacing: 1px; }
+        .section-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--main), transparent); margin-left: 10px; opacity: 0.3; }
+
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #707be2; }
+        .item:last-child { border-bottom: none; }
+        .label b { display: block; font-size: 14px; color: #5790e6 !important; }
+        .label span { font-size: 11px; color: #555 !important; }
+
+        /* --- SWITCH --- */
+        .switch { position: relative; width: 42px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background: #3a3a3a; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background: var(--main); box-shadow: 0 0 15px var(--main); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* --- GRID --- */
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .game-card { background: #3102ff; border-radius: 18px; padding: 15px; text-align: center; border: 1px solid #f119bb; }
+        .game-icon { width: 55px; height: 55px; border-radius: 12px; border: 1px solid var(--main); margin-bottom: 10px; object-fit: cover; }
+        .btn-launch { background: var(--main); border: none; color: rgb(163, 238, 24); width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 11px; }
+
+        #toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: var(--main); color: white; padding: 10px 25px; border-radius: 50px; font-weight: bold; opacity: 0; transition: 0.4s; z-index: 10001; }
+        #p-text { margin-top: 10px; color: #61b3da; font-weight: bold; font-size: 14px; }
+
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px #ff0000, 0 0 40px rgba(255, 0, 0, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3); } 50% { box-shadow: 0 0 30px #ff0000, 0 0 60px rgba(255, 0, 0, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.5); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas" width="1920" height="1005"></canvas>
+    <div id="toast">ACTIVATED!</div>
+
+    <div id="loader" style="display: flex;">
+        <div class="vx-logo-frame">
+            <img src="https://i.postimg.cc/4x87hm6s/pxfuel.jpg">
+        </div>
+        <div style="font-size:12px; color:var(--main); font-weight:bold; letter-spacing:3px; margin-bottom:15px">open aimheadtrick</div>
+        <div class="progress-box"><div class="progress-bar" id="bar"></div></div>
+        <div id="p-text">0%</div>
+    </div>
+
+    <div id="main-ui">
+        <div class="header">
+            <h1 style="margin:0; font-size:24px; font-weight:900">MENU PANEL IOS <span style="color:var(--main)">PANEL</span></h1>
+            <div class="ver-tag">MENU FULL</div>
+        </div>
+
+        <div class="card" style="border: 1px solid rgba(19, 2, 250, 0.979); background: linear-gradient(145deg, #0f0f0f, #1a0505);">
+            <div class="section-title">Menu AIM</div>
+            <div class="item">
+                <div class="label"><b>AimHead 70%</b><span>ดูดหัว70%</span></div>
+                <label class="switch"><input type="checkbox" onchange="showT('On✔️')"><span class="slider"></span></label>
+            </div>
+            <div class="item">
+                <div class="label"><b>AimNeck</b><span>ดูดคอ89%</span></div>
+                <label class="switch"><input type="checkbox" onchange="showT('On✔️')"><span class="slider"></span></label>
+            </div>
+            <div class="item">
+                <div class="label"><b>Drag Head Easy</b><span>ลากง่ายขึ้น85%</span></div>
+                <label class="switch"><input type="checkbox" onchange="showT('On✔️')"><span class="slider"></span></label>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">Menu Update AIM</div>
+            <div class="item">
+                <div class="label"><b>Aim Headshot</b><span>เปิดใช้งานดูดหัว</span></div>
+                <label class="switch"><input type="checkbox" onchange="showT('On✔️')"><span class="slider"></span></label>
+            </div>
+            <div class="item">
+                <div class="label"><b>Stable DNS file</b><span>ไฟล์Dns เสถียร</span></div>
+                <label class="switch"><input type="checkbox" onchange="showT('On✔️')"><span class="slider"></span></label>
+            </div>
+            <div class="item">
+                <div class="label"><b>AIM Headshot</b><span>ดูดหัว100%</span></div>
+                <label class="switch"><input type="checkbox" onchange="showT('On✔️')"><span class="slider"></span></label>
+            </div>
+        </div>
+
+        <div class="card">
             <div class="section-title">   </div>
             <div class="item">
-                <div class="label"><b> FPS</b><span>FPS 120</span></div>
+                <div class="label"><b>FPS</b><span>FPS 120</span></div>
                 <label class="switch"><input type="checkbox" onchange="showT('On✔️')"><span class="slider"></span></label>
             </div>
             <div class="item">
@@ -153,45 +297,61 @@
             </div>
         </div>
 
-        <p style="text-align:center; color:#44a4c2; font-size:10px; font-weight:bold; letter-spacing:2px">
-
-
-        </p>
+        <p style="text-align:center; color:#44a4c2; font-size:10px; font-weight:bold; letter-spacing:2px"></p>
     </div>
 
     <script>
         function showT(msg) {
             const t = document.getElementById('toast');
-            t.innerText = msg; t.style.opacity = '1';
+            t.innerText = msg; 
+            t.style.opacity = '1';
             setTimeout(() => { t.style.opacity = '0'; }, 1500);
         }
 
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth; 
+        canvas.height = window.innerHeight;
+        
         let particles = [];
-        for(let i=0; i<35; i++){ particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2, v: Math.random()*0.8 }); }
+        for(let i=0; i<35; i++){ 
+            particles.push({ 
+                x: Math.random()*canvas.width, 
+                y: Math.random()*canvas.height, 
+                s: Math.random()*2, 
+                v: Math.random()*0.8 
+            }); 
+        }
+        
         function draw(){
-            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#ff0000';
-            particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill(); p.y -= p.v; if(p.y < 0) p.y = canvas.height; });
+            ctx.clearRect(0,0,canvas.width,canvas.height); 
+            ctx.fillStyle = '#ff0000';
+            particles.forEach(p => { 
+                ctx.beginPath(); 
+                ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); 
+                ctx.fill(); 
+                p.y -= p.v; 
+                if(p.y < 0) p.y = canvas.height; 
+            });
             requestAnimationFrame(draw);
         }
         draw();
 
+        // เพิ่ม Loader Progress แบบเร็ว ๆ และมีแสงแดงเคลื่อนไหว
         let p = 0;
         let int = setInterval(() => {
-            p += Math.floor(Math.random()*8)+2;
+            p += Math.floor(Math.random()*8) + 2;
             if(p >= 100){
-                p = 100; clearInterval(int);
+                p = 100; 
+                clearInterval(int);
                 setTimeout(() => {
                     document.getElementById('loader').style.display = 'none';
                     document.getElementById('main-ui').style.display = 'block';
                 }, 500);
             }
-            document.getElementById('bar').style.width = p+'%';
-            document.getElementById('p-text').innerText = p+'%';
+            document.getElementById('bar').style.width = p + '%';
+            document.getElementById('p-text').innerText = p + '%';
         }, 60);
     </script>
-
-
-</body></html>
+</body>
+</html>
